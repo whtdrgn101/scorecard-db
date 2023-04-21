@@ -8,6 +8,9 @@ This project contains the scripts to create the scorecard database as well as lo
 - Postgres 14 or Greater
 
 ### Running
+- Set Environment Variables:
+  - SCORECARD_USER
+  - SCORECARD_PASS
 - Build Database with the following Commands:
   - `psql scorecard_db < schema/schema.sql`
 - Load Data With the Following Commands:
