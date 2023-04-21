@@ -88,7 +88,44 @@ def run():
         logging.info("Commiting bow DB changes")
         conn.commit()
 
+        #########
+        # ROUND #
+        #########
+        logging.info("Loading round data CSV")
+        rounds = pd.read_csv('data/round.csv')
+        logging.debug(f"Round Count: {len(rounds)}")
+
+        logging.info("Wiping round table")
+        conn.execute(text("TRUNCATE ols.round RESTART IDENTITY CASCADE;"))
+
+        for index, round in rounds.iterrows():
+            query = f"INSERT INTO ols.round (round_type_id, user_id, bow_id) VALUES({round['round_type_id']},{round['user_id']},{round['bow_id']});"
+            logging.debug(query)
+            conn.execute(text(query))
+
+        logging.info("Commiting round DB changes")
+        conn.commit()
+
+        ########
+        # ENDS #
+        ########
+        logging.info("Loading end data CSV")
+        ends = pd.read_csv('data/end.csv')
+        logging.debug(f"End Count: {len(ends)}")
+
+        logging.info("Wiping end table")
+        conn.execute(text("TRUNCATE ols.end RESTART IDENTITY CASCADE;"))
+
+        for index, end in ends.iterrows():
+            query = f"INSERT INTO ols.end (round_id, score) VALUES({end['round_id']},{end['score']});"
+            logging.debug(query)
+            conn.execute(text(query))
+
+        logging.info("Commiting end DB changes")
+        conn.commit()
+
         logging.info("LOAD DONE")
+
 
 if __name__ == "__main__":
     setup_logging()

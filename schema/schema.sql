@@ -68,12 +68,55 @@ EXECUTE PROCEDURE ols.trigger_set_updated_timestamp();
 
 CREATE TABLE IF NOT EXISTS ols.round (
   id SERIAL PRIMARY KEY,
+  round_type_id INT REFERENCES ols.round_type(id),
   user_id INT REFERENCES ols.users(id),
   bow_id INT REFERENCES ols.bow(id),
-  round_date TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  round_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  score_total INT NOT NULL default 0,
+  created_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_date TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TRIGGER set_round_updated_timestamp_trigger
 BEFORE UPDATE ON ols.round
 FOR EACH ROW
 EXECUTE PROCEDURE ols.trigger_set_updated_timestamp();
+
+CREATE TABLE IF NOT EXISTS ols.end (
+  id SERIAL PRIMARY KEY,
+  round_id INT REFERENCES ols.round(id),
+  score INT NOT NULL default 0,
+  created_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_date TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TRIGGER set_end_updated_timestamp_trigger
+BEFORE UPDATE ON ols.end
+FOR EACH ROW
+EXECUTE PROCEDURE ols.trigger_set_updated_timestamp();
+
+CREATE OR REPLACE FUNCTION ols.trigger_update_round_score()
+  RETURNS TRIGGER
+  language plpgsql
+  AS
+$$
+DECLARE 
+  round_total integer;
+BEGIN
+  
+  SELECT SUM(score)
+  INTO round_total
+  FROM ols.end
+  WHERE round_id = NEW.round_id;
+  
+  UPDATE ols.round SET score_total = round_total WHERE id=NEW.round_id;
+
+  RETURN NEW;
+
+END;
+$$;
+
+CREATE TRIGGER set_round_total_trigger
+AFTER INSERT OR UPDATE ON ols.end
+FOR EACH ROW
+EXECUTE PROCEDURE ols.trigger_update_round_score();
