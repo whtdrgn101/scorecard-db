@@ -1,5 +1,8 @@
 SET DEFAULT_TABLESPACE=scorecard_ts;
 
+ALTER DATABASE scorecard_db SET SEARCH_PATH = "$user", ols, public;
+ALTER ROLE scorecard SET SEARCH_PATH = "$user", ols, publc;
+
 DROP SCHEMA IF EXISTS ols CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS ols;
