@@ -2,6 +2,7 @@ import pandas as pd
 import sqlalchemy as sa
 from sqlalchemy import create_engine, text
 import logging
+import os
 
 def setup_logging():
     logging.basicConfig(filename='data_load.log', encoding='utf-8', level=logging.DEBUG,format='%(asctime)s:%(levelname)s:%(message)s')
@@ -10,8 +11,8 @@ def run():
 
     db_url = sa.engine.URL.create(
         drivername="postgresql",
-        username="scorecard",
-        password="App123@les",
+        username=os.environ.get('SCORECARD_USER'),
+        password=os.environ.get('SCORECARD_PASS'),
         host="localhost",
         database="scorecard_db",
     )
