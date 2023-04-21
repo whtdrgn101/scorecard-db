@@ -5,10 +5,11 @@ This project contains the scripts to create the scorecard database as well as lo
 
 ### Requirements
 - Python 3.8 or Greater
-- Postgres 14 or Greater
-- Postgres tablespace named `scorecard_ts`
-- Postgres database named `scorecard_db`
-- Postgres user with full control over `scorecard_db` database
+  - Python venv and pip must be installed
+- Postgres 14 or Greater setup as:
+  - Postgres tablespace named `scorecard_ts`
+  - Postgres database named `scorecard_db`
+  - Postgres user with full control over `scorecard_db` database
 
 ### Running
 - Set Environment Variables:
