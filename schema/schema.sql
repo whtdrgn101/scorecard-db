@@ -56,8 +56,8 @@ EXECUTE PROCEDURE ols.trigger_set_updated_timestamp();
 
 CREATE TABLE IF NOT EXISTS ols.bow (
   id SERIAL PRIMARY KEY,
-  user_id INT REFERENCES ols.users(id),
-  bow_type_id INT REFERENCES ols.bow_type(id),
+  user_id INT REFERENCES ols.users(id) ON DELETE CASCADE,
+  bow_type_id INT REFERENCES ols.bow_type(id) ON DELETE SET NULL,
   name VARCHAR(100) NOT NULL,
   draw_weight FLOAT NOT NULL DEFAULT 0.0,
   created_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -71,9 +71,9 @@ EXECUTE PROCEDURE ols.trigger_set_updated_timestamp();
 
 CREATE TABLE IF NOT EXISTS ols.round (
   id SERIAL PRIMARY KEY,
-  round_type_id INT REFERENCES ols.round_type(id),
-  user_id INT REFERENCES ols.users(id),
-  bow_id INT REFERENCES ols.bow(id),
+  round_type_id INT REFERENCES ols.round_type(id) ON DELETE SET NULL,
+  user_id INT REFERENCES ols.users(id) ON DELETE CASCADE,
+  bow_id INT REFERENCES ols.bow(id) ON DELETE CASCADE,
   round_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   score_total INT NOT NULL default 0,
   created_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -87,7 +87,7 @@ EXECUTE PROCEDURE ols.trigger_set_updated_timestamp();
 
 CREATE TABLE IF NOT EXISTS ols.end (
   id SERIAL PRIMARY KEY,
-  round_id INT REFERENCES ols.round(id),
+  round_id INT REFERENCES ols.round(id) ON DELETE CASCADE,
   score INT NOT NULL default 0,
   created_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_date TIMESTAMPTZ NOT NULL DEFAULT NOW()
