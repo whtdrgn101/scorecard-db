@@ -3,9 +3,15 @@ import sqlalchemy as sa
 from sqlalchemy import create_engine, text
 import logging
 import os
+import hashlib
 
 def setup_logging():
     logging.basicConfig(filename='data_load.log', encoding='utf-8', level=logging.DEBUG,format='%(asctime)s:%(levelname)s:%(message)s')
+
+def generate_md5_hash(string):
+    md5_hash = hashlib.md5()
+    md5_hash.update(string.encode('utf-8'))
+    return md5_hash.hexdigest()
 
 def run():
 
@@ -64,7 +70,7 @@ def run():
         conn.execute(text("TRUNCATE ols.users RESTART IDENTITY CASCADE;"))
 
         for index, user in users.iterrows():
-            query = f"INSERT INTO ols.users (email, name) VALUES('{user['email']}','{user['name']}');"
+            query = f"INSERT INTO ols.users (email, name, password) VALUES('{user['email']}','{user['name']}', '{generate_md5_hash(user['password'])}');"
             logging.debug(query)
             conn.execute(text(query))
 
