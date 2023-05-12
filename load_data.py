@@ -19,8 +19,8 @@ def run():
         drivername="postgresql",
         username=os.environ.get('SCORECARD_USER'),
         password=os.environ.get('SCORECARD_PASS'),
-        host="localhost",
-        database="scorecard_db",
+        host=os.environ.get('SCORECARD_HOST'),
+        database=os.environ.get('SCORECARD_DB'),
     )
     engine = create_engine(db_url)
 
